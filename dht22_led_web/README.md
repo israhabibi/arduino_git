@@ -82,7 +82,7 @@ The **2N2222** is an NPN transistor, and its pins are as follows:
 
 Here is a diagram showing the pinout of the 2N2222 NPN transistor:
 
-![2N2222 Pinout](asset/Transistor 2N222 diyengineers.png)
+![2N2222 Pinout](asset/Transistor2N222diyengineers.png)
 
 
 - **Emitter (E)**: Connects to **Ground** (GND).
@@ -102,6 +102,7 @@ Once the ESP8266 connects to Wi-Fi, open the Serial Monitor. You will see the ES
 ```
 http://192.168.1.100
 ```
+![Web Interface](asset/WebInterface.png)
 
 On the web page, you'll be able to:
 - Turn the LED on and off.
