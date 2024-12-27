@@ -95,12 +95,18 @@ void setup() {
   });
 
   server.on("/LED=ON30", HTTP_GET, [](AsyncWebServerRequest *request) {
+    // Turn on the LED and set the state
     digitalWrite(ledPin, HIGH);
     ledState = "ON (30 seconds)";
+    
+    // Start or reset the timer for 30 seconds
     timerActive = true;
     timerStart = millis();
+    
+    // Send a redirect to reload the page and update the status
     request->redirect("/");
   });
+
 
   // Start server
   server.begin();
@@ -109,10 +115,10 @@ void setup() {
 void loop() {
   // Handle 30-second timer
   if (timerActive && millis() - timerStart >= 30000) {
-    digitalWrite(ledPin, LOW);
-    ledState = "OFF";
-    timerActive = false;
-    Serial.println("Timer completed, LED turned off.");
+    digitalWrite(ledPin, LOW);  // Turn off the LED
+    ledState = "OFF";  // Update state
+    timerActive = false;  // Reset the timer
+    Serial.println("30 seconds timer completed, LED turned off.");
   }
 
   // Update DHT values every 5 seconds
@@ -122,6 +128,22 @@ void loop() {
     lastDHTRead = millis();
   }
 
+  // Handle temperature-based LED control asynchronously
+  if (temperature > 31.0) {
+    if (ledState != "ON (Temperature)") {
+      digitalWrite(ledPin, HIGH);
+      ledState = "ON (Temperature)";
+      Serial.println("LED turned ON due to high temperature");
+    }
+  } else if (temperature < 30.0) {
+    if (ledState != "OFF (Temperature)") {
+      digitalWrite(ledPin, LOW);
+      ledState = "OFF (Temperature)";
+      Serial.println("LED turned OFF due to low temperature");
+    }
+  }
+
   // Handle OTA requests
   ElegantOTA.loop();  // Process OTA requests
 }
+
