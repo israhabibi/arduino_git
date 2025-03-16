@@ -38,7 +38,7 @@ void setup() {
 
   // Initialize LED pin
   pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+  digitalWrite(ledPin, HIGH);
 
   // Initialize DHT sensor
   dht.begin();
@@ -70,7 +70,7 @@ void setup() {
     html += "<h1>ESP8266 LED & DHT22 Control</h1>";
     html += "<p><a href=\"/LED=ON\"><button style=\"background-color: #4CAF50; color: white;\">Turn LED ON</button></a></p>";
     html += "<p><a href=\"/LED=OFF\"><button style=\"background-color: #f44336; color: white;\">Turn LED OFF</button></a></p>";
-    html += "<p><a href=\"/LED=ON30\"><button style=\"background-color: #2196F3; color: white;\">Turn LED ON for 30 Seconds</button></a></p>";
+    html += "<p><a href=\"/LED=2MINS\"><button style=\"background-color: #2196F3; color: white;\">Turn LED ON for 2 Minutes</button></a></p>";
     html += "<p class=\"status\">LED Status: <strong>" + ledState + "</strong></p>";
     html += "<h2>Temperature & Humidity</h2>";
     html += "<p>Temperature: " + String(temperature) + "&deg;C</p>"; // Use &deg; for degree symbol
@@ -81,22 +81,22 @@ void setup() {
   });
 
   server.on("/LED=ON", HTTP_GET, [](AsyncWebServerRequest *request) {
-    digitalWrite(ledPin, HIGH);
+    digitalWrite(ledPin, LOW);
     ledState = "ON";
     timerActive = false;
     request->redirect("/");
   });
 
   server.on("/LED=OFF", HTTP_GET, [](AsyncWebServerRequest *request) {
-    digitalWrite(ledPin, LOW);
+    digitalWrite(ledPin, HIGH);
     ledState = "OFF";
     timerActive = false;
     request->redirect("/");
   });
 
-  server.on("/LED=ON30", HTTP_GET, [](AsyncWebServerRequest *request) {
-    digitalWrite(ledPin, HIGH);
-    ledState = "ON (30 seconds)";
+  server.on("/LED=2MINS", HTTP_GET, [](AsyncWebServerRequest *request) {
+    digitalWrite(ledPin, LOW);
+    ledState = "ON (2 Minutes)";
     timerActive = true;
     timerStart = millis();
     request->redirect("/");
@@ -107,9 +107,9 @@ void setup() {
 }
 
 void loop() {
-  // Handle 30-second timer
-  if (timerActive && millis() - timerStart >= 30000) {
-    digitalWrite(ledPin, LOW);
+  // Handle 120-second timer
+  if (timerActive && millis() - timerStart >= 120000) {
+    digitalWrite(ledPin, HIGH);
     ledState = "OFF";
     timerActive = false;
     Serial.println("Timer completed, LED turned off.");
